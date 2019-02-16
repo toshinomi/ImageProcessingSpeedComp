@@ -474,10 +474,11 @@ namespace ImageProcessingSpeedComp
 
                 stopwatch.Stop();
 
-                Invoke(new Action(SetPictureBoxStatus));
                 Invoke(new Action<long>(SetTextTime), stopwatch.ElapsedMilliseconds);
-                Invoke(new Action(SetButtonEnable));
             }
+            Invoke(new Action(SetPictureBoxStatus));
+            Invoke(new Action(SetButtonEnable));
+
             m_bTaskRunning = false;
             stopwatch = null;
             m_tokenSource = null;
@@ -513,24 +514,24 @@ namespace ImageProcessingSpeedComp
             bool bResult;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
+            btnStop.Enabled = true;
             bResult = await TaskSetPixelData();
             if (bResult)
             {
-                btnStop.Enabled = true;
                 bResult = await TaskWorkNormal();
                 if (bResult)
                 {
-
                     pictureBoxOriginal.ImageLocation = m_strOpenFileName;
                     pictureBoxFilter.Image = m_bitmapImageFilter;
 
                     stopwatch.Stop();
 
-                    Invoke(new Action(SetPictureBoxStatus));
                     Invoke(new Action<long>(SetTextTime), stopwatch.ElapsedMilliseconds);
-                    Invoke(new Action(SetButtonEnable));
                 }
             }
+            Invoke(new Action(SetPictureBoxStatus));
+            Invoke(new Action(SetButtonEnable));
+
             m_bTaskRunning = false;
             stopwatch = null;
             m_tokenSource = null;
@@ -555,9 +556,6 @@ namespace ImageProcessingSpeedComp
             }
 
             m_tokenSource.Cancel();
-
-            SetPictureBoxStatus();
-            SetButtonEnable();
 
             return;
         }
