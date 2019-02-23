@@ -25,7 +25,6 @@ namespace ImageProcessingSpeedComp
         private Bitmap m_bitmapImageFilter;
         private byte[,,] m_pixelData;
         private string m_strOpenFileName;
-        private bool m_bTaskRunning;
         private bool m_bStatusView;
         private CancellationTokenSource m_tokenSource;
 
@@ -33,7 +32,7 @@ namespace ImageProcessingSpeedComp
         {
             InitializeComponent();
 
-            SetFormMail();
+            SetFormMain();
 
             btnFileSelect.Enabled = true;
             btnAllClear.Enabled = true;
@@ -59,14 +58,14 @@ namespace ImageProcessingSpeedComp
 
             m_bitmapImageFilter = null;
             m_tokenSource = null;
-
-            m_bTaskRunning = false;
         }
 
-        public void SetFormMail()
+        public void SetFormMain()
         {
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+
+            return;
         }
 
         public void SetToolTip()
@@ -165,6 +164,8 @@ namespace ImageProcessingSpeedComp
         public void LoadImage()
         {
             m_bitmapImageFilter = new Bitmap(m_strOpenFileName);
+
+            return;
         }
 
         public bool FilterUnsafe(CancellationToken token)
@@ -369,7 +370,7 @@ namespace ImageProcessingSpeedComp
 
         public void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (m_bTaskRunning)
+            if (m_tokenSource != null)
             {
                 e.Cancel = true;
             }
@@ -456,7 +457,6 @@ namespace ImageProcessingSpeedComp
             m_bStatusView = checkBoxView.Checked;
 
             pictureBoxStatus.Visible = true;
-            m_bTaskRunning = true;
 
             LoadImage();
             progressBar.Value = 0;
@@ -479,7 +479,6 @@ namespace ImageProcessingSpeedComp
             Invoke(new Action(SetPictureBoxStatus));
             Invoke(new Action(SetButtonEnable));
 
-            m_bTaskRunning = false;
             stopwatch = null;
             m_tokenSource = null;
             m_bitmapImageFilter = null;
@@ -503,7 +502,6 @@ namespace ImageProcessingSpeedComp
             m_bStatusView = checkBoxView.Checked;
 
             pictureBoxStatus.Visible = true;
-            m_bTaskRunning = true;
 
             LoadImage();
             progressBar.Value = 0;
@@ -532,7 +530,6 @@ namespace ImageProcessingSpeedComp
             Invoke(new Action(SetPictureBoxStatus));
             Invoke(new Action(SetButtonEnable));
 
-            m_bTaskRunning = false;
             stopwatch = null;
             m_tokenSource = null;
             m_bitmapImageFilter = null;
@@ -550,12 +547,10 @@ namespace ImageProcessingSpeedComp
 
         private void BtnStop_Click(object sender, EventArgs e)
         {
-            if (m_tokenSource == null)
+            if (m_tokenSource != null)
             {
-                return;
+                m_tokenSource.Cancel();
             }
-
-            m_tokenSource.Cancel();
 
             return;
         }
