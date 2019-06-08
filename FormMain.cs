@@ -20,8 +20,7 @@ namespace ImageProcessingSpeedComp
         };
 
         private const int m_nMaskSize = 3;
-        private const int m_nFilterMax = 1;
-        private double[,] m_dMask;
+        private short[,] m_nMask;
         private Bitmap m_bitmapImageFilter;
         private byte[,,] m_pixelData;
         private string m_strOpenFileName;
@@ -49,11 +48,11 @@ namespace ImageProcessingSpeedComp
 
             SetToolTip();
 
-            m_dMask = new double[m_nMaskSize, m_nMaskSize]
+            m_nMask = new short[m_nMaskSize, m_nMaskSize]
             {
-                {1.0,  1.0, 1.0},
-                {1.0, -8.0, 1.0},
-                {1.0,  1.0, 1.0}
+                {1,  1, 1},
+                {1, -8, 1},
+                {1,  1, 1}
             };
 
             m_bitmapImageFilter = null;
@@ -106,7 +105,7 @@ namespace ImageProcessingSpeedComp
 
         ~FormMain()
         {
-            m_dMask = null;
+            m_nMask = null;
             m_bitmapImageFilter = null;
             m_pixelData = null;
             m_tokenSource = null;
@@ -173,7 +172,7 @@ namespace ImageProcessingSpeedComp
             bool bResult = true;
             int nWidthSize = m_bitmapImageFilter.Width;
             int nHeightSize = m_bitmapImageFilter.Height;
-            int nMasksize = m_dMask.GetLength(0);
+            int nMasksize = m_nMask.GetLength(0);
 
             BitmapData bitmapData = m_bitmapImageFilter.LockBits(new Rectangle(0, 0, nWidthSize, nHeightSize), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
 
@@ -194,40 +193,32 @@ namespace ImageProcessingSpeedComp
 
                         byte* pPixel = (byte*)bitmapData.Scan0 + nIndexHeight * bitmapData.Stride + nIndexWidth * 4;
 
-                        double dCalB = 0.0;
-                        double dCalG = 0.0;
-                        double dCalR = 0.0;
-                        double dCalA = 0.0;
+                        long lCalB = 0;
+                        long lCalG = 0;
+                        long lCalR = 0;
                         int nIndexWidthMask;
                         int nIndexHightMask;
-                        int nFilter = 0;
 
-                        while (nFilter < m_nFilterMax)
+                        for (nIndexHightMask = 0; nIndexHightMask < nMasksize; nIndexHightMask++)
                         {
-                            for (nIndexHightMask = 0; nIndexHightMask < nMasksize; nIndexHightMask++)
+                            for (nIndexWidthMask = 0; nIndexWidthMask < nMasksize; nIndexWidthMask++)
                             {
-                                for (nIndexWidthMask = 0; nIndexWidthMask < nMasksize; nIndexWidthMask++)
+                                if (nIndexWidth + nIndexWidthMask > 0 &&
+                                    nIndexWidth + nIndexWidthMask < nWidthSize &&
+                                    nIndexHeight + nIndexHightMask > 0 &&
+                                    nIndexHeight + nIndexHightMask < nHeightSize)
                                 {
-                                    if (nIndexWidth + nIndexWidthMask > 0 &&
-                                        nIndexWidth + nIndexWidthMask < nWidthSize &&
-                                        nIndexHeight + nIndexHightMask > 0 &&
-                                        nIndexHeight + nIndexHightMask < nHeightSize)
-                                    {
-                                        byte* pPixel2 = (byte*)bitmapData.Scan0 + (nIndexHeight + nIndexHightMask) * bitmapData.Stride + (nIndexWidth + nIndexWidthMask) * 4;
+                                    byte* pPixel2 = (byte*)bitmapData.Scan0 + (nIndexHeight + nIndexHightMask) * bitmapData.Stride + (nIndexWidth + nIndexWidthMask) * 4;
 
-                                        dCalB += pPixel2[0] * m_dMask[nIndexWidthMask, nIndexHightMask];
-                                        dCalG += pPixel2[1] * m_dMask[nIndexWidthMask, nIndexHightMask];
-                                        dCalR += pPixel2[2] * m_dMask[nIndexWidthMask, nIndexHightMask];
-                                        dCalA += pPixel2[3] * m_dMask[nIndexWidthMask, nIndexHightMask];
-                                    }
+                                    lCalB += pPixel2[0] * m_nMask[nIndexWidthMask, nIndexHightMask];
+                                    lCalG += pPixel2[1] * m_nMask[nIndexWidthMask, nIndexHightMask];
+                                    lCalR += pPixel2[2] * m_nMask[nIndexWidthMask, nIndexHightMask];
                                 }
                             }
-                            nFilter++;
                         }
-                        pPixel[0] = DoubleToByte(dCalB);
-                        pPixel[1] = DoubleToByte(dCalG);
-                        pPixel[2] = DoubleToByte(dCalR);
-                        pPixel[3] = DoubleToByte(dCalA);
+                        pPixel[0] = LongToByte(lCalB);
+                        pPixel[1] = LongToByte(lCalG);
+                        pPixel[2] = LongToByte(lCalR);
 
                         nCount++;
                     }
@@ -246,7 +237,7 @@ namespace ImageProcessingSpeedComp
             bool bResult = true;
             int nWidthSize = m_bitmapImageFilter.Width;
             int nHeightSize = m_bitmapImageFilter.Height;
-            int nMasksize = m_dMask.GetLength(0);
+            int nMasksize = m_nMask.GetLength(0);
 
             int nIndexWidth;
             int nIndexHeight;
@@ -262,51 +253,44 @@ namespace ImageProcessingSpeedComp
                         break;
                     }
 
-                    byte bytePixelB;
-                    byte bytePixelG;
-                    byte bytePixelR;
-                    byte bytePixelA;
+                    byte nPixelB;
+                    byte nPixelG;
+                    byte nPixelR;
+                    byte nPixelA;
 
-                    double dCalB = 0.0;
-                    double dCalG = 0.0;
-                    double dCalR = 0.0;
-                    double dCalA = 0.0;
+                    long lCalB = 0;
+                    long lCalG = 0;
+                    long lCalR = 0;
 
                     int nIndexWidthMask;
                     int nIndexHightMask;
-                    int nFilter = 0;
 
-                    while (nFilter < m_nFilterMax)
+                    for (nIndexHightMask = 0; nIndexHightMask < nMasksize; nIndexHightMask++)
                     {
-                        for (nIndexHightMask = 0; nIndexHightMask < nMasksize; nIndexHightMask++)
+                        for (nIndexWidthMask = 0; nIndexWidthMask < nMasksize; nIndexWidthMask++)
                         {
-                            for (nIndexWidthMask = 0; nIndexWidthMask < nMasksize; nIndexWidthMask++)
+                            if (nIndexWidth + nIndexWidthMask > 0 &&
+                                nIndexWidth + nIndexWidthMask < nWidthSize &&
+                                nIndexHeight + nIndexHightMask > 0 &&
+                                nIndexHeight + nIndexHightMask < nHeightSize)
                             {
-                                if (nIndexWidth + nIndexWidthMask > 0 &&
-                                    nIndexWidth + nIndexWidthMask < nWidthSize &&
-                                    nIndexHeight + nIndexHightMask > 0 &&
-                                    nIndexHeight + nIndexHightMask < nHeightSize)
-                                {
-                                    byte bytePixel2B = m_pixelData[nIndexWidth + nIndexWidthMask, nIndexHeight + nIndexHightMask, (int)Pixel.B];
-                                    byte bytePixel2G = m_pixelData[nIndexWidth + nIndexWidthMask, nIndexHeight + nIndexHightMask, (int)Pixel.G];
-                                    byte bytePixel2R = m_pixelData[nIndexWidth + nIndexWidthMask, nIndexHeight + nIndexHightMask, (int)Pixel.R];
-                                    byte bytePixel2A = m_pixelData[nIndexWidth + nIndexWidthMask, nIndexHeight + nIndexHightMask, (int)Pixel.A];
+                                byte nPixel2B = m_pixelData[nIndexWidth + nIndexWidthMask, nIndexHeight + nIndexHightMask, (int)Pixel.B];
+                                byte nPixel2G = m_pixelData[nIndexWidth + nIndexWidthMask, nIndexHeight + nIndexHightMask, (int)Pixel.G];
+                                byte nPixel2R = m_pixelData[nIndexWidth + nIndexWidthMask, nIndexHeight + nIndexHightMask, (int)Pixel.R];
+                                byte nPixel2A = m_pixelData[nIndexWidth + nIndexWidthMask, nIndexHeight + nIndexHightMask, (int)Pixel.A];
 
-                                    dCalB += bytePixel2B * m_dMask[nIndexWidthMask, nIndexHightMask];
-                                    dCalG += bytePixel2G * m_dMask[nIndexWidthMask, nIndexHightMask];
-                                    dCalR += bytePixel2R * m_dMask[nIndexWidthMask, nIndexHightMask];
-                                    dCalA += bytePixel2A * m_dMask[nIndexWidthMask, nIndexHightMask];
-                                }
+                                lCalB += nPixel2B * m_nMask[nIndexWidthMask, nIndexHightMask];
+                                lCalG += nPixel2G * m_nMask[nIndexWidthMask, nIndexHightMask];
+                                lCalR += nPixel2R * m_nMask[nIndexWidthMask, nIndexHightMask];
                             }
                         }
-                        nFilter++;
                     }
-                    bytePixelB = DoubleToByte(dCalB);
-                    bytePixelG = DoubleToByte(dCalG);
-                    bytePixelR = DoubleToByte(dCalR);
-                    bytePixelA = DoubleToByte(dCalA);
+                    nPixelB = LongToByte(lCalB);
+                    nPixelG = LongToByte(lCalG);
+                    nPixelR = LongToByte(lCalR);
+                    nPixelA = m_pixelData[nIndexWidth, nIndexHeight, (int)Pixel.A];
 
-                    m_bitmapImageFilter.SetPixel(nIndexWidth, nIndexHeight, Color.FromArgb(bytePixelA, bytePixelR, bytePixelG, bytePixelB));
+                    m_bitmapImageFilter.SetPixel(nIndexWidth, nIndexHeight, Color.FromArgb(nPixelA, nPixelR, nPixelG, nPixelB));
 
                     nCount++;
                 }
@@ -350,22 +334,40 @@ namespace ImageProcessingSpeedComp
             return bResult;
         }
 
-        public byte DoubleToByte(double dValue)
+        public byte DoubleToByte(double _dValue)
         {
-            byte byteCnvValue = 0;
-            if (dValue > 255.0)
+            byte nCnvValue = 0;
+            if (_dValue > 255.0)
             {
-                byteCnvValue = 255;
+                nCnvValue = 255;
             }
-            else if (dValue < 0)
+            else if (_dValue < 0)
             {
-                byteCnvValue = 0;
+                nCnvValue = 0;
             }
             else
             {
-                byteCnvValue = (byte)dValue;
+                nCnvValue = (byte)_dValue;
             }
-            return byteCnvValue;
+            return nCnvValue;
+        }
+
+        public byte LongToByte(long _lValue)
+        {
+            byte nCnvValue = 0;
+            if (_lValue > 255.0)
+            {
+                nCnvValue = 255;
+            }
+            else if (_lValue < 0)
+            {
+                nCnvValue = 0;
+            }
+            else
+            {
+                nCnvValue = (byte)_lValue;
+            }
+            return nCnvValue;
         }
 
         public void FormMain_FormClosing(object sender, FormClosingEventArgs e)
