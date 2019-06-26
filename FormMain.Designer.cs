@@ -78,7 +78,7 @@ namespace ImageProcessingSpeedComp
             this.btnFileSelect.TabIndex = 0;
             this.btnFileSelect.Text = "File Select...";
             this.btnFileSelect.UseVisualStyleBackColor = false;
-            this.btnFileSelect.Click += new System.EventHandler(this.BtnFileSelect_Click);
+            this.btnFileSelect.Click += new System.EventHandler(this.OnClickBtnFileSelect);
             // 
             // groupBoxOperation
             // 
@@ -107,7 +107,7 @@ namespace ImageProcessingSpeedComp
             this.btnStop.TabIndex = 4;
             this.btnStop.Text = "Stop";
             this.btnStop.UseVisualStyleBackColor = false;
-            this.btnStop.Click += new System.EventHandler(this.BtnStop_Click);
+            this.btnStop.Click += new System.EventHandler(this.OnClickBtnStop);
             // 
             // btnFilterStartNormal
             // 
@@ -121,7 +121,7 @@ namespace ImageProcessingSpeedComp
             this.btnFilterStartNormal.TabIndex = 3;
             this.btnFilterStartNormal.Text = "Filter Start\r\n(Normal)";
             this.btnFilterStartNormal.UseVisualStyleBackColor = false;
-            this.btnFilterStartNormal.Click += new System.EventHandler(this.BtnFilterStartNormal_Click);
+            this.btnFilterStartNormal.Click += new System.EventHandler(this.OnClickBtnFilterStartNormal);
             // 
             // btnAllClear
             // 
@@ -134,7 +134,7 @@ namespace ImageProcessingSpeedComp
             this.btnAllClear.TabIndex = 1;
             this.btnAllClear.Text = "All Clear";
             this.btnAllClear.UseVisualStyleBackColor = false;
-            this.btnAllClear.Click += new System.EventHandler(this.BtnAllClear_Click);
+            this.btnAllClear.Click += new System.EventHandler(this.OnClickBtnAllClear);
             // 
             // btnFilterStartUnsafe
             // 
@@ -148,7 +148,7 @@ namespace ImageProcessingSpeedComp
             this.btnFilterStartUnsafe.TabIndex = 2;
             this.btnFilterStartUnsafe.Text = "Filter Start\r\n(Unsafe)";
             this.btnFilterStartUnsafe.UseVisualStyleBackColor = false;
-            this.btnFilterStartUnsafe.Click += new System.EventHandler(this.BtnFilterStartUnsafe_Click);
+            this.btnFilterStartUnsafe.Click += new System.EventHandler(this.OnClickBtnFilterStartUnsafe);
             // 
             // groupBoxImageOutput
             // 
@@ -179,7 +179,7 @@ namespace ImageProcessingSpeedComp
             this.checkBoxView.TabIndex = 2;
             this.checkBoxView.Text = "View";
             this.checkBoxView.UseVisualStyleBackColor = true;
-            this.checkBoxView.CheckedChanged += new System.EventHandler(this.CheckBoxShow_CheckedChanged);
+            this.checkBoxView.CheckedChanged += new System.EventHandler(this.OnCheckedChangedCheckBoxShow);
             // 
             // pictureBoxStatus
             // 
@@ -318,7 +318,7 @@ namespace ImageProcessingSpeedComp
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
             this.Text = "Image Processing Speed Comparison";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosingFormMain);
             this.groupBoxOperation.ResumeLayout(false);
             this.groupBoxImageOutput.ResumeLayout(false);
             this.groupBoxImageOutput.PerformLayout();

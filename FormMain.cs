@@ -370,7 +370,7 @@ namespace ImageProcessingSpeedComp
             return nCnvValue;
         }
 
-        public void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        public void OnFormClosingFormMain(object sender, FormClosingEventArgs e)
         {
             if (m_tokenSource != null)
             {
@@ -379,7 +379,7 @@ namespace ImageProcessingSpeedComp
             return;
         }
 
-        public void BtnFileSelect_Click(object sender, EventArgs e)
+        public void OnClickBtnFileSelect(object sender, EventArgs e)
         {
             OpenFileDialog openFileDlg = new OpenFileDialog();
 
@@ -420,7 +420,7 @@ namespace ImageProcessingSpeedComp
             return;
         }
 
-        private void BtnAllClear_Click(object sender, EventArgs e)
+        private void OnClickBtnAllClear(object sender, EventArgs e)
         {
             pictureBoxOriginal.ImageLocation = null;
             pictureBoxFilter.Image = null;
@@ -443,7 +443,7 @@ namespace ImageProcessingSpeedComp
             return;
         }
 
-        private async void BtnFilterStartUnsafe_Click(object sender, EventArgs e)
+        private async void OnClickBtnFilterStartUnsafe(object sender, EventArgs e)
         {
             pictureBoxFilter.Image = null;
 
@@ -488,7 +488,7 @@ namespace ImageProcessingSpeedComp
             return;
         }
 
-        private async void BtnFilterStartNormal_Click(object sender, EventArgs e)
+        private async void OnClickBtnFilterStartNormal(object sender, EventArgs e)
         {
             pictureBoxFilter.Image = null;
 
@@ -540,14 +540,14 @@ namespace ImageProcessingSpeedComp
             return;
         }
 
-        private void CheckBoxShow_CheckedChanged(object sender, EventArgs e)
+        private void OnCheckedChangedCheckBoxShow(object sender, EventArgs e)
         {
             m_bStatusView = checkBoxView.Checked;
 
             return;
         }
 
-        private void BtnStop_Click(object sender, EventArgs e)
+        private void OnClickBtnStop(object sender, EventArgs e)
         {
             if (m_tokenSource != null)
             {
